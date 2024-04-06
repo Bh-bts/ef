@@ -62,7 +62,7 @@ jobs:
         run: |
           test_count=$(grep -oP '(?<=<td align="left">)\d+(?=<\/td>)' ./target/site/surefire-report.html | head -1)
           failure_count=$(grep -oP '(?<=<td>)[0-9]+(?=<\/td>)' ./target/site/surefire-report.html | sed -n '3p')
-          success_rate=$(grep -oP '(?<=<td>)[0-9]+%<\/td>' ./target/site/surefire-report.html | sed -n '4p' | grep -oP '[0-9]+%')
+          success_rate=$(grep -oP '(?<=<td>)[0-9]+%<\/td>' ./target/site/surefire-report.html | tail -n 1 | grep -oP '[0-9]+%')
           
           echo "::set-output name=test_count::$test_count"
           echo "::set-output name=failure_count::$failure_count"
