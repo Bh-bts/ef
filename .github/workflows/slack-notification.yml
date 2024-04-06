@@ -40,7 +40,7 @@ jobs:
 
       # Run tests using Maven
       - name: Run Tests
-        run: mvn test -Dtest="testcases.AppTest"
+        run: mvn test -Dtest="com.testing.AppTest"
 
       # Generate test reports using Maven's surefire-report plugin
       - name: Generate Test Report
