@@ -60,16 +60,10 @@ jobs:
       - name: Parse Surefire Report
         id: parse-surefire-report
         run: |
-          pass_count=$(grep -oP '(?<=<td align="left"><a href=).*(?=class="b">)' target/site/surefire-report.html | grep -c 'icon_success_sml.gif')
-          fail_count=$(grep -oP '(?<=<td align="left"><a href=).*(?=class="b">)' target/site/surefire-report.html | grep -c 'icon_error_sml.gif')
-          skipped_count=$(grep -oP '(?<=<td align="left"><a href=).*(?=class="b">)' target/site/surefire-report.html | grep -c 'icon_skipped_sml.gif')
-  
-          total_tests=$((pass_count + fail_count + skipped_count))
-          success_rate=$(echo "scale=2; ($pass_count / $total_tests) * 100" | bc)
-          
+          pass_count=$(grep -oP '<td>[0-9]+</td>' target/site/surefire-report.html | awk 'NR==1{print}' | sed -r 's/<\/?[^>]+>//g')
+          fail_count=$(grep -oP '<td>[0-9]+</td>' target/site/surefire-report.html | awk 'NR==3{print}' | sed -r 's/<\/?[^>]+>//g')
           echo "::set-output name=pass_count::$pass_count"
           echo "::set-output name=fail_count::$fail_count"
-          echo "::set-output name=success_rate::$success_rate"
 
       - name: Debug Surefire Report
         run: |
@@ -93,7 +87,7 @@ jobs:
                 {
                   "color": "#36a64f",
                   "title": "Surefire Report",
-                  "text": "Passed tests: ${{ steps.parse-surefire-report.outputs.pass_count }}\nFailed tests: ${{ steps.parse-surefire-report.outputs.fail_count }}\nSuccess rate: ${{ steps.parse-surefire-report.outputs.success_rate }}%"
+                  "text": "Passed tests: ${{ steps.parse-surefire-report.outputs.pass_count }}\nFailed tests: ${{ steps.parse-surefire-report.outputs.fail_count }}"
                 }
               ]
             }
