@@ -70,7 +70,6 @@ jobs:
       - name: Debug Parse Surefire Report
         run: |
           echo "Pass Count: ${{ steps.parse-surefire-report.outputs.pass_count }}"
-          echo "Fail Count: ${{ steps.parse-surefire-report.outputs.fail_count }}"
 
       - name: Send Slack notification with Surefire report
         env:
@@ -78,4 +77,4 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "Test count: ${{ steps.extract_test_count.outputs.test_count }}"
+          text: "Test count: ${{ steps.parse-surefire-report.outputs.test_count }}"
