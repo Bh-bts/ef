@@ -60,8 +60,8 @@ jobs:
       - name: Parse Surefire Report
         id: parse-surefire-report
         run: |
-          pass_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Tests|<th>Errors|<th>Failures|<th>Skipped' | awk '{print $3}' | paste -sd+ - | bc)
-          fail_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Errors|<th>Failures' | awk '{print $3}' | paste -sd+ - | bc)
+          pass_count=$(xmllint --html --xpath "string(//th[text()='Tests']/following-sibling::td)" target/site/surefire-report.html)
+          fail_count=$(xmllint --html --xpath "string(//th[text()='Failures']/following-sibling::td)" target/site/surefire-report.html)
           echo "::set-output name=pass_count::$pass_count"
           echo "::set-output name=fail_count::$fail_count"
 
