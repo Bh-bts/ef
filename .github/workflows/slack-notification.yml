@@ -60,7 +60,7 @@ jobs:
       - name: Parse Surefire Report
         id: parse-surefire-report
         run: |
-          test_count=$(grep -oP '(?<=<td align="left">)\d+(?=</td>)' ./target/surefire-reports/index.html | head -1)
+          test_count=$(grep -oP '(?<=<td align="left">)\d+(?=<\/td>)' ./target/site/surefire-report.html | head -1)
           echo "::set-output name=test_count::$test_count"
 
       - name: Debug Surefire Report
