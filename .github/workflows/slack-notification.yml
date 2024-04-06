@@ -61,25 +61,10 @@ jobs:
         id: parse-surefire-report
         run: |
           test_count=$(grep -oP '(?<=<td align="left">)\d+(?=<\/td>)' ./target/site/surefire-report.html | head -1)
-          success_rate=$(grep -oP '(?<=<td>100%</td><td>)\d+\.\d+(?= s</td>)' ./target/site/surefire-report.html | head -1)
-          errors=$(grep -oP '(?<=<td>)[0-9]+(?=</td><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+%</td><td>[0-9.]+ s</td>)' ./target/site/surefire-report.html | head -1)
-          failures=$(grep -oP '(?<=<td>0</td><td>)\d+(?=</td><td>0</td>)' ./target/site/surefire-report.html | head -1)
-          skipped=$(grep -oP '(?<=<td>0</td><td>0</td><td>)\d+(?=</td><td>100%<\/td><td>\d+\.\d+ s<\/td>)' ./target/site/surefire-report.html | head -1)
-  
-          echo "::set-output name=test_count::$test_count"
-          echo "::set-output name=success_rate::$success_rate"
-          echo "::set-output name=errors::$errors"
-          echo "::set-output name=failures::$failures"
-          echo "::set-output name=skipped::$skipped"
+          failure_count=$(grep -oP '(?<=<td>)[0-9]+(?=<\/td>)' ./target/site/surefire-report.html | sed -n '3p')
           
-
-      - name: Debug Surefire Report
-        run: |
-          cat target/site/surefire-report.html
-
-      - name: Debug Parse Surefire Report
-        run: |
-          echo "Pass Count: ${{ steps.parse-surefire-report.outputs.pass_count }}"
+          echo "::set-output name=test_count::$test_count"
+          echo "::set-output name=failure_count::failure_count"
 
       - name: Send Slack notification with Surefire report
         env:
@@ -89,7 +74,4 @@ jobs:
           status: ${{ job.status }}
           text: | 
             Test count: ${{ steps.parse-surefire-report.outputs.test_count }}
-            Success Rate: ${{ steps.parse-surefire-report.outputs.success_rate }}%
-            Errors: ${{ steps.parse-surefire-report.outputs.errors }}
-            Failures: ${{ steps.parse-surefire-report.outputs.failures }}
-            Skipped: ${{ steps.parse-surefire-report.outputs.skipped }}
+            Failure count: ${{ steps.parse-surefire-report.outputs.failure_count }}
