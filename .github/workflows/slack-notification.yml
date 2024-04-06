@@ -1,11 +1,11 @@
-name: YouTube Test
+name: slack notification Test
 
 # Triggers define when the workflow should run
 on:
   # Trigger the workflow when code is pushed to the master branch
   push:
     branches:
-      - master
+      - main
     # Schedule the workflow to run daily at 00:30 AM UTC
   schedule:
     - cron: '30 0 * * *'
@@ -56,3 +56,21 @@ jobs:
           name: test-report
           path: target/site
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to warn
+
+      - name: Send Slack notification with Surefire report
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: repo,commit,event,action,workflow,ref,url
+          custom_payload: |
+            {
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "title": "Surefire Report",
+                  "text": "Passed tests: ${{ steps.parse-surefire-report.outputs.pass_count }}\nFailed tests: ${{ steps.parse-surefire-report.outputs.fail_count }}"
+                }
+              ]
+            }
