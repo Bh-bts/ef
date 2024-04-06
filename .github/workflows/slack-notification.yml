@@ -61,7 +61,10 @@ jobs:
         id: parse-surefire-report
         run: |
           test_count=$(grep -oP '(?<=<td align="left">)\d+(?=<\/td>)' ./target/site/surefire-report.html | head -1)
+          success_rate=$(grep -oP '(?<=<td>100%</td><td>)\d+\.\d+(?= s</td>)' ./target/site/surefire-report.html | head -1)
+
           echo "::set-output name=test_count::$test_count"
+          echo "::set-output name=success_rate::$success_rate"
 
       - name: Debug Surefire Report
         run: |
@@ -77,4 +80,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "Test count: ${{ steps.parse-surefire-report.outputs.test_count }}"
+          text: | 
+            Test count: ${{ steps.parse-surefire-report.outputs.test_count }}
+            Success Rate: ${{ steps.parse-surefire-report.outputs.success_rate }}%
