@@ -65,6 +65,15 @@ jobs:
           echo "::set-output name=pass_count::$pass_count"
           echo "::set-output name=fail_count::$fail_count"
 
+      - name: Debug Surefire Report
+        run: |
+          cat target/site/surefire-report.html
+
+      - name: Debug Parse Surefire Report
+        run: |
+          echo "Pass Count: ${{ steps.parse-surefire-report.outputs.pass_count }}"
+          echo "Fail Count: ${{ steps.parse-surefire-report.outputs.fail_count }}"
+
       - name: Send Slack notification with Surefire report
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
