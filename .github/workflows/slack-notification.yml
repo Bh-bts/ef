@@ -61,10 +61,12 @@ jobs:
         id: parse-surefire-report
         run: |
           test_count=$(grep -oP '(?<=<td align="left">)\d+(?=<\/td>)' ./target/site/surefire-report.html | head -1)
+          error_count=$(grep -oP '(?<=<td>)[0-9]+(?=<\/td>)' ./target/site/surefire-report.html | sed -n '2p')
           failure_count=$(grep -oP '(?<=<td>)[0-9]+(?=<\/td>)' ./target/site/surefire-report.html | sed -n '3p')
           success_rate=$(grep -oP '(?<=<td>)[0-9]+%<\/td>' ./target/site/surefire-report.html | tail -n 1 | grep -oP '[0-9]+%')
           
           echo "::set-output name=test_count::$test_count"
+          echo "::set-output name=error_count::$error_count"
           echo "::set-output name=failure_count::$failure_count"
           echo "::set-output name=success_rate::$success_rate"
 
@@ -76,5 +78,6 @@ jobs:
           status: ${{ job.status }}
           text: | 
             Test count: ${{ steps.parse-surefire-report.outputs.test_count }}
+            Error count: ${{ steps.parse-surefire-report.outputs.error_count }}
             Failure count: ${{ steps.parse-surefire-report.outputs.failure_count }}
             Success rate: ${{ steps.parse-surefire-report.outputs.success_rate }}
