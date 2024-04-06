@@ -60,8 +60,8 @@ jobs:
       - name: Parse Surefire Report
         id: parse-surefire-report
         run: |
-          pass_count=$(awk -F'</td><td>' '/Tests/ {print $2}' target/site/surefire-report.html)
-          fail_count=$(awk -F'</td><td>' '/Failures/ {print $4}' target/site/surefire-report.html)
+          pass_count=$(grep -oP '<td></td>' target/site/surefire-report.html | wc -l)
+          fail_count=$(grep -oP '<td></td>' target/site/surefire-report.html | wc -l)
           echo "::set-output name=pass_count::$pass_count"
           echo "::set-output name=fail_count::$fail_count"
 
