@@ -57,6 +57,14 @@ jobs:
           path: target/site
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to warn
 
+      - name: Parse Surefire Report
+        id: parse-surefire-report
+        run: |
+            pass_count=$(grep -oP '<testsuite .*? errors=".*?" failures=".*?" name=".*?" skipped=".*?" tests="(.*?)" time=".*?" timestamp=".*?">' target/surefire-reports/*.xml | grep -oP 'tests="(.*?)"' | cut -d '"' -f 2 | paste -sd+ - | bc)
+            fail_count=$(grep -oP '<testsuite .*? errors=".*?" failures="(.*?)" name=".*?" skipped=".*?" tests=".*?" time=".*?" timestamp=".*?">' target/surefire-reports/*.xml | grep -oP 'failures="(.*?)"' | cut -d '"' -f 2 | paste -sd+ - | bc)
+            echo "::set-output name=pass_count::$pass_count"
+            echo "::set-output name=fail_count::$fail_count"
+
       - name: Send Slack notification with Surefire report
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
