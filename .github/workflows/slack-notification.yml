@@ -60,8 +60,10 @@ jobs:
       - name: Parse Surefire Report
         id: parse-surefire-report
         run: |
-          pass_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Tests|<th>Errors|<th>Failures|<th>Skipped' | awk '{print $3}' | paste -sd+ - | bc)
-          fail_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Errors|<th>Failures' | awk '{print $3}' | paste -sd+ - | bc)
+       #   pass_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Tests|<th>Errors|<th>Failures|<th>Skipped' | awk '{print $3}' | paste -sd+ - | bc)
+       #   fail_count=$(grep -oP '<th>(Tests|Errors|Failures|Skipped).*?</th>\s*<td>(.*?)</td>' target/site/surefire-report.html | grep -E '<th>Errors|<th>Failures' | awk '{print $3}' | paste -sd+ - | bc)
+          pass_count=$(grep -oP '<td>1</td>' target/site/surefire-report.html | wc -l)
+          fail_count=$(grep -oP '<td>0</td>' target/site/surefire-report.html | wc -l)
           echo "::set-output name=pass_count::$pass_count"
           echo "::set-output name=fail_count::$fail_count"
 
